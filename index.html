@@ -123,11 +123,7 @@
       <form id="auth-form-barber" onsubmit="loginAsBarber(event)" class="space-y-4 hidden">
         <div>
           <label class="block text-xs font-semibold text-gray-300 mb-1">Selecione o Barbeiro</label>
-          <select id="login-barber-id" class="w-full bg-dark-900 border border-dark-600 rounded-xl p-3 text-sm text-white focus:border-gold-500 outline-none">
-            <option value="b1">Diego Dias (Master)</option>
-            <option value="b2">Mateus Santos</option>
-            <option value="b3">Gabriel Lima</option>
-          </select>
+          <select id="login-barber-id" class="w-full bg-dark-900 border border-dark-600 rounded-xl p-3 text-sm text-white focus:border-gold-500 outline-none"></select>
         </div>
         <div>
           <label class="block text-xs font-semibold text-gray-300 mb-1">PIN / Senha de Acesso (Padrão: 1234)</label>
@@ -558,6 +554,29 @@
         </div>
       </div>
 
+      <!-- GERENCIAR BARBEIROS (NOVO BLOCO ADICIONADO) -->
+      <div class="bg-dark-800 p-5 rounded-xl border border-dark-700 space-y-4">
+        <h3 class="text-base font-bold text-white"><i class="fa-solid fa-user-gear text-gold-400 mr-2"></i> Gerenciar Barbeiros da Equipe</h3>
+        
+        <form onsubmit="addNewBarber(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-dark-900 p-4 rounded-xl border border-dark-700">
+          <div>
+            <label class="block text-[11px] font-semibold text-gray-300 mb-1">Nome do Barbeiro</label>
+            <input type="text" id="new-barber-name" required placeholder="Ex: Carlos Silva" class="w-full bg-dark-800 border border-dark-600 rounded-lg p-2.5 text-xs text-white focus:border-gold-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-gray-300 mb-1">Cargo / Especialidade</label>
+            <input type="text" id="new-barber-role" required placeholder="Ex: Especialista Fade" class="w-full bg-dark-800 border border-dark-600 rounded-lg p-2.5 text-xs text-white focus:border-gold-500 outline-none">
+          </div>
+          <div class="flex items-end">
+            <button type="submit" class="w-full py-2.5 bg-gold-500 hover:brightness-110 text-dark-900 font-bold rounded-lg text-xs transition-all">
+              <i class="fa-solid fa-user-plus mr-1"></i> Adicionar Barbeiro
+            </button>
+          </div>
+        </form>
+
+        <div id="admin-barbers-list" class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2"></div>
+      </div>
+
       <div class="bg-dark-800 p-5 rounded-xl border border-dark-700 space-y-4">
         <div class="flex justify-between items-center">
           <h3 class="text-base font-bold text-white">Todos os Agendamentos Cadastrados</h3>
@@ -595,11 +614,13 @@
       { id: 's6', name: 'Barboterapia Premium', price: 50.00, duration: 40, icon: 'fa-spa', desc: 'Tratamento com óleos essenciais e vapor de ozônio.' }
     ];
 
-    const BARBERS = [
+    const DEFAULT_BARBERS = [
       { id: 'b1', name: 'Diego Dias', role: 'Master Barber', photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80' },
       { id: 'b2', name: 'Mateus Santos', role: 'Especialista Fade', photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80' },
       { id: 'b3', name: 'Gabriel Lima', role: 'Barba & Visagismo', photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80' }
     ];
+
+    let BARBERS = JSON.parse(localStorage.getItem('brdias_barbers_v3')) || DEFAULT_BARBERS;
 
     const PRODUCTS = [
       { id: 'p1', name: 'Pomada Modeladora Efeito Seco', price: 40.00, icon: 'fa-spray-can' },
@@ -693,6 +714,11 @@
       });
       document.getElementById(`auth-form-${tab}`).classList.remove('hidden');
       document.getElementById(`auth-tab-${tab}`).className = 'py-2.5 rounded-lg bg-gold-500 text-dark-900 font-bold transition-all';
+      
+      if (tab === 'barber') {
+        const select = document.getElementById('login-barber-id');
+        select.innerHTML = BARBERS.map(b => `<option value="${b.id}">${b.name} (${b.role})</option>`).join('');
+      }
     }
 
     function loginAsClient(e) {
@@ -957,7 +983,7 @@
             <div>
               <p class="text-xs font-bold text-gold-400">${a.date.split('-').reverse().join('/')} às ${a.time}</p>
               <h4 class="font-bold text-white text-sm">${servNames}</h4>
-              <p class="text-xs text-gray-400">Barbeiro: ${barber?.name} | Status: <span class="text-emerald-400">${a.status}</span></p>
+              <p class="text-xs text-gray-400">Barbeiro: ${barber?.name || 'Equipe'} | Status: <span class="text-emerald-400">${a.status}</span></p>
             </div>
             ${a.status !== 'Cancelado' ? `<button onclick="cancelClientApt('${a.id}')" class="px-3 py-1.5 bg-red-500/10 text-red-400 rounded-lg text-xs hover:bg-red-500 hover:text-white">Cancelar</button>` : ''}
           </div>
@@ -1085,13 +1111,28 @@
 
       document.getElementById('admin-whatsapp-input').value = localStorage.getItem(STORAGE_WA) || '558488251134';
 
+      // Renderizar Barbeiros Cadastrados no Admin
+      const barbersContainer = document.getElementById('admin-barbers-list');
+      barbersContainer.innerHTML = BARBERS.map(b => `
+        <div class="bg-dark-900 p-3 rounded-lg border border-dark-700 flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2.5">
+            <img src="${b.photo}" class="w-8 h-8 rounded-full object-cover border border-dark-600">
+            <div>
+              <p class="font-bold text-white">${b.name}</p>
+              <p class="text-[10px] text-gold-400">${b.role}</p>
+            </div>
+          </div>
+          ${BARBERS.length > 1 ? `<button onclick="deleteBarber('${b.id}')" class="text-red-400 hover:text-red-300 p-1"><i class="fa-solid fa-trash"></i></button>` : ''}
+        </div>
+      `).join('');
+
       document.getElementById('admin-all-appointments').innerHTML = appts.map(a => {
         const barber = BARBERS.find(b => b.id === a.barberId);
         const isDone = a.status === 'Concluído';
         return `
           <div class="bg-dark-900 p-3 rounded-lg border border-dark-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-xs">
             <div>
-              <strong class="text-gold-400">${a.date.split('-').reverse().join('/')} - ${a.time}</strong> | <span class="text-white font-semibold">${a.clientName}</span> (${barber?.name}) 
+              <strong class="text-gold-400">${a.date.split('-').reverse().join('/')} - ${a.time}</strong> | <span class="text-white font-semibold">${a.clientName}</span> (${barber?.name || 'Barbeiro'}) 
               <span class="ml-2 px-2 py-0.5 rounded text-[10px] font-bold ${isDone ? 'bg-emerald-500/20 text-emerald-400' : 'bg-blue-500/20 text-blue-400'}">${a.status || 'Confirmado'}</span>
             </div>
             <div class="flex items-center gap-2">
@@ -1102,6 +1143,38 @@
           </div>
         `;
       }).join('') || '<p class="text-xs text-gray-400">Sem agendamentos registrados.</p>';
+    }
+
+    function addNewBarber(e) {
+      e.preventDefault();
+      const name = document.getElementById('new-barber-name').value.trim();
+      const role = document.getElementById('new-barber-role').value.trim();
+      if (!name || !role) return;
+
+      const newId = 'b_' + Date.now();
+      const photos = [
+        'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
+        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80'
+      ];
+      const randomPhoto = photos[Math.floor(Math.random() * photos.length)];
+
+      BARBERS.push({ id: newId, name, role, photo: randomPhoto });
+      localStorage.setItem('brdias_barbers_v3', JSON.stringify(BARBERS));
+
+      document.getElementById('new-barber-name').value = '';
+      document.getElementById('new-barber-role').value = '';
+      renderAdminDashboard();
+      alert('Barbeiro adicionado com sucesso!');
+    }
+
+    function deleteBarber(id) {
+      if (BARBERS.length <= 1) return alert('Você precisa manter pelo menos 1 barbeiro cadastrado.');
+      if (confirm('Deseja realmente remover este barbeiro?')) {
+        BARBERS = BARBERS.filter(b => b.id !== id);
+        localStorage.setItem('brdias_barbers_v3', JSON.stringify(BARBERS));
+        renderAdminDashboard();
+      }
     }
 
     function completeAppointment(id) {
