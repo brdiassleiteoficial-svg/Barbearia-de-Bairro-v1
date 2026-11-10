@@ -12,6 +12,9 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="BrDias">
 
+  <!-- Manifest dinâmico injetado -->
+  <link rel="manifest" id="dynamic-manifest">
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -166,8 +169,14 @@
         </div>
       </div>
 
-      <!-- Active User Info & Logout -->
-      <div class="flex items-center space-x-3">
+      <!-- Active User Info & Install PWA Button & Logout -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <!-- Botão de Instalar PWA -->
+        <button id="pwa-install-btn" onclick="installPWA()" class="hidden items-center space-x-1.5 bg-gold-500/10 text-gold-400 border border-gold-500/30 text-xs px-3 py-1.5 rounded-lg hover:bg-gold-500 hover:text-dark-900 transition-all font-bold">
+          <i class="fa-solid fa-download"></i>
+          <span class="hidden sm:inline">Baixar App</span>
+        </button>
+
         <div class="text-right hidden sm:block">
           <p id="user-badge-name" class="text-xs font-bold text-white">Lucas Silva</p>
           <p id="user-badge-role" class="text-[10px] text-gold-400 uppercase font-semibold">Cliente</p>
@@ -603,8 +612,11 @@
     let selectedBarber = null;
     let selectedDate = '';
     let selectedTime = '';
+    let deferredPrompt = null;
 
     window.onload = function() {
+      initPWAEngine();
+
       const saved = localStorage.getItem(STORAGE_SESSION);
       if (saved) {
         currentUser = JSON.parse(saved);
@@ -617,6 +629,60 @@
       const dateInput = document.getElementById('client-booking-date');
       if (dateInput) dateInput.value = tomorrowStr;
     };
+
+    // ================= PWA INSTALL ENGINE =================
+    function initPWAEngine() {
+      // Injetar Manifesto Dinâmico via Blob para garantir compatibilidade móvel
+      const manifestData = {
+        "name": "BrDias Barbearia",
+        "short_name": "BrDias",
+        "start_url": "./",
+        "display": "standalone",
+        "background_color": "#0E0F12",
+        "theme_color": "#0E0F12",
+        "icons": [
+          {
+            "src": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=192&q=80",
+            "sizes": "192x192",
+            "type": "image/png"
+          }
+        ]
+      };
+      const stringManifest = JSON.stringify(manifestData);
+      const blob = new Blob([stringManifest], { type: 'application/json' });
+      const manifestURL = URL.createObjectURL(blob);
+      document.getElementById('dynamic-manifest').setAttribute('href', manifestURL);
+
+      // Registrar Service Worker embutido via Blob
+      if ('serviceWorker' in navigator) {
+        const swCode = `self.addEventListener('fetch', function(event) { event.respondWith(fetch(event.request).catch(() => caches.match(event.request))); });`;
+        const swBlob = new Blob([swCode], { type: 'text/javascript' });
+        const swUrl = URL.createObjectURL(swBlob);
+        navigator.serviceWorker.register(swUrl).catch(() => {});
+      }
+
+      // Capturar evento de instalação do navegador
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        const installBtn = document.getElementById('pwa-install-btn');
+        if (installBtn) installBtn.classList.remove('hidden');
+      });
+    }
+
+    function installPWA() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            document.getElementById('pwa-install-btn').classList.add('hidden');
+          }
+          deferredPrompt = null;
+        });
+      } else {
+        alert('Para instalar o aplicativo no seu telemóvel, abra o menu do navegador (três pontos no canto superior direito) e selecione "Adicionar ao ecrã inicial" ou "Instalar aplicação".');
+      }
+    }
 
     function switchAuthTab(tab) {
       ['client', 'barber', 'admin'].forEach(t => {
