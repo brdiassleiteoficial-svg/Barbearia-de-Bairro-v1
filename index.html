@@ -251,7 +251,7 @@
 
               <div>
                 <label class="block text-xs font-semibold text-gray-300 mb-1">WhatsApp / Telefone *</label>
-                <input type="tel" id="client-phone" placeholder="(84) 98825-1134" class="w-full bg-dark-900 border border-dark-600 rounded-lg p-3 text-white focus:border-gold-500 focus:outline-none text-sm">
+                <input type="tel" id="client-phone" placeholder="Seu WhatsApp" class="w-full bg-dark-900 border border-dark-600 rounded-lg p-3 text-white focus:border-gold-500 focus:outline-none text-sm">
               </div>
 
               <div>
@@ -889,7 +889,7 @@
 
       const encodedMessage = encodeURIComponent(message);
       // Fictitious Barbearia WhatsApp Number
-      const phoneNum = '5584999999999';
+      const phoneNum = '(84) 98825-1134';
       
       document.getElementById('btn-whatsapp-send').href = `https://wa.me/${phoneNum}?text=${encodedMessage}`;
       document.getElementById('modal-success').classList.remove('hidden');
