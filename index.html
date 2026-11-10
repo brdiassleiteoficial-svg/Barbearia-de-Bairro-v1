@@ -86,13 +86,10 @@
 </head>
 <body class="bg-dark-900 text-gray-100 font-sans antialiased min-h-screen flex flex-col selection:bg-gold-500 selection:text-dark-900 pb-20 md:pb-0">
 
-  <!-- ========================================================================== -->
-  <!-- TELA DE LOGIN / AUTENTICAÇÃO INICIAL                                      -->
-  <!-- ========================================================================== -->
+  <!-- TELA DE LOGIN / AUTENTICAÇÃO INICIAL -->
   <div id="auth-screen" class="fixed inset-0 z-50 bg-dark-950 flex items-center justify-center p-4 overflow-y-auto">
     <div class="max-w-md w-full bg-dark-800 border border-gold-500/30 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative">
       
-      <!-- Logo Branding Header -->
       <div class="text-center space-y-2">
         <div class="w-16 h-16 rounded-full bg-gradient-to-br from-gold-400 to-gold-700 flex items-center justify-center text-dark-900 font-serif font-black text-3xl shadow-xl mx-auto">
           B
@@ -101,14 +98,12 @@
         <p class="text-xs text-gray-400">Selecione seu perfil de acesso para continuar</p>
       </div>
 
-      <!-- Tabs de Perfil de Login -->
       <div class="grid grid-cols-3 gap-1 bg-dark-900 p-1.5 rounded-xl border border-dark-700 text-xs font-semibold">
         <button id="auth-tab-client" onclick="switchAuthTab('client')" class="py-2.5 rounded-lg bg-gold-500 text-dark-900 font-bold transition-all">Cliente</button>
         <button id="auth-tab-barber" onclick="switchAuthTab('barber')" class="py-2.5 rounded-lg text-gray-400 hover:text-white transition-all">Barbeiro</button>
         <button id="auth-tab-admin" onclick="switchAuthTab('admin')" class="py-2.5 rounded-lg text-gray-400 hover:text-white transition-all">Admin</button>
       </div>
 
-      <!-- LOGIN FORM: CLIENTE -->
       <form id="auth-form-client" onsubmit="loginAsClient(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-semibold text-gray-300 mb-1">Seu Nome *</label>
@@ -123,7 +118,6 @@
         </button>
       </form>
 
-      <!-- LOGIN FORM: BARBEIRO -->
       <form id="auth-form-barber" onsubmit="loginAsBarber(event)" class="space-y-4 hidden">
         <div>
           <label class="block text-xs font-semibold text-gray-300 mb-1">Selecione o Barbeiro</label>
@@ -138,7 +132,6 @@
         </button>
       </form>
 
-      <!-- LOGIN FORM: ADMIN -->
       <form id="auth-form-admin" onsubmit="loginAsAdmin(event)" class="space-y-4 hidden">
         <div>
           <label class="block text-xs font-semibold text-gray-300 mb-1">Senha do Administrador (Padrão: admin123)</label>
@@ -155,11 +148,9 @@
     </div>
   </div>
 
-  <!-- TOP HEADER (Só aparece pós-login) -->
+  <!-- TOP HEADER -->
   <header id="main-header" class="hidden sticky top-0 z-40 bg-dark-950/90 backdrop-blur-md border-b border-dark-700/80 px-4 py-3">
     <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
-      
-      <!-- Brand Logo -->
       <div class="flex items-center space-x-3">
         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gold-400 to-gold-700 flex items-center justify-center text-dark-900 shadow-lg font-serif font-black text-xl">
           B
@@ -169,9 +160,7 @@
         </div>
       </div>
 
-      <!-- Active User Info & Install PWA Button & Logout -->
       <div class="flex items-center space-x-2 sm:space-x-3">
-        <!-- Botão de Instalar PWA -->
         <button id="pwa-install-btn" onclick="installPWA()" class="hidden items-center space-x-1.5 bg-gold-500/10 text-gold-400 border border-gold-500/30 text-xs px-3 py-1.5 rounded-lg hover:bg-gold-500 hover:text-dark-900 transition-all font-bold">
           <i class="fa-solid fa-download"></i>
           <span class="hidden sm:inline">Baixar App</span>
@@ -187,19 +176,14 @@
           <span>Sair</span>
         </button>
       </div>
-
     </div>
   </header>
 
   <!-- MAIN CONTAINER -->
   <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
 
-    <!-- ========================================================================== -->
-    <!-- 1. VISÃO DO CLIENTE                                                        -->
-    <!-- ========================================================================== -->
+    <!-- 1. VISÃO DO CLIENTE -->
     <div id="role-view-client" class="space-y-6 hidden">
-      
-      <!-- Sub-menu do Cliente -->
       <div class="flex border-b border-dark-700 text-xs sm:text-sm font-medium overflow-x-auto gap-2 scrollbar-none">
         <button id="c-tab-btn-booking" onclick="switchClientTab('booking')" class="py-2.5 px-4 text-gold-500 border-b-2 border-gold-500 whitespace-nowrap font-bold flex items-center gap-2">
           <i class="fa-solid fa-calendar-plus"></i> Agendar
@@ -224,8 +208,6 @@
 
       <!-- TAB CLIENTE: NOVO AGENDAMENTO -->
       <div id="client-subtab-booking" class="space-y-6">
-        
-        <!-- Passos -->
         <div class="grid grid-cols-4 gap-2 text-center text-xs font-medium py-2">
           <div id="c-step-pill-1" class="py-2 border-b-2 border-gold-500 text-gold-500 font-bold">1. Serviços</div>
           <div id="c-step-pill-2" class="py-2 border-b-2 border-dark-700 text-gray-500">2. Barbeiro</div>
@@ -233,7 +215,6 @@
           <div id="c-step-pill-4" class="py-2 border-b-2 border-dark-700 text-gray-500">4. Confirmação</div>
         </div>
 
-        <!-- STEP 1: SERVIÇOS -->
         <div id="c-step-1" class="space-y-4">
           <div class="flex justify-between items-end">
             <div>
@@ -257,7 +238,6 @@
           </div>
         </div>
 
-        <!-- STEP 2: BARBEIRO -->
         <div id="c-step-2" class="space-y-4 hidden">
           <div class="flex items-center justify-between">
             <button onclick="goToClientStep(1)" class="text-sm text-gray-400 hover:text-white flex items-center gap-1">
@@ -265,12 +245,10 @@
             </button>
             <span class="text-xs text-gold-400">Etapa 2 de 4</span>
           </div>
-
           <h2 class="text-xl font-bold text-white font-serif">Escolha o Barbeiro</h2>
           <div id="client-barbers-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
         </div>
 
-        <!-- STEP 3: DATA E HORÁRIO -->
         <div id="c-step-3" class="space-y-4 hidden">
           <div class="flex items-center justify-between">
             <button onclick="goToClientStep(2)" class="text-sm text-gray-400 hover:text-white flex items-center gap-1">
@@ -278,22 +256,18 @@
             </button>
             <span class="text-xs text-gold-400">Etapa 3 de 4</span>
           </div>
-
           <h2 class="text-xl font-bold text-white font-serif">Selecione Data e Horário</h2>
-
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="bg-dark-800 p-4 rounded-xl border border-dark-700 space-y-3">
               <label class="block text-sm font-semibold text-gray-300">Data do Atendimento</label>
               <input type="date" id="client-booking-date" onchange="renderTimeSlots()" class="w-full bg-dark-900 border border-dark-600 rounded-lg p-3 text-white focus:border-gold-500 focus:outline-none">
               <p class="text-xs text-gray-400">Horários atualizados em tempo real conforme disponibilidade do barbeiro.</p>
             </div>
-
             <div class="bg-dark-800 p-4 rounded-xl border border-dark-700 space-y-3">
               <label class="block text-sm font-semibold text-gray-300">Horários Disponíveis</label>
               <div id="client-time-slots-grid" class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-56 overflow-y-auto pr-1"></div>
             </div>
           </div>
-
           <div class="flex justify-end">
             <button onclick="goToClientStep(4)" id="c-btn-step3-next" disabled class="px-6 py-3 rounded-xl bg-gray-700 text-gray-400 font-bold cursor-not-allowed transition-all flex items-center gap-2">
               Avançar para Confirmação <i class="fa-solid fa-arrow-right"></i>
@@ -301,7 +275,6 @@
           </div>
         </div>
 
-        <!-- STEP 4: CONFIRMAÇÃO DO CLIENTE -->
         <div id="c-step-4" class="space-y-4 hidden">
           <div class="flex items-center justify-between">
             <button onclick="goToClientStep(3)" class="text-sm text-gray-400 hover:text-white flex items-center gap-1">
@@ -309,9 +282,7 @@
             </button>
             <span class="text-xs text-gold-400">Etapa 4 de 4</span>
           </div>
-
           <h2 class="text-xl font-bold text-white font-serif">Confirme seu Agendamento</h2>
-
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2 bg-dark-800 p-5 rounded-xl border border-dark-700 space-y-4">
               <h3 class="text-sm font-bold text-gold-400 uppercase tracking-wider">Identificação do Cliente</h3>
@@ -328,7 +299,6 @@
                 <textarea id="c-input-notes" rows="2" placeholder="Ex: Cabelo baixinho nos lados, navalhado..." class="w-full bg-dark-900 border border-dark-600 rounded-lg p-3 text-white text-sm focus:border-gold-500 outline-none"></textarea>
               </div>
             </div>
-
             <div class="glass-card p-5 rounded-xl border border-gold-500/30 flex flex-col justify-between space-y-4">
               <div class="space-y-3">
                 <h3 class="text-base font-bold text-white border-b border-dark-700 pb-2">Resumo da Reserva</h3>
@@ -355,7 +325,6 @@
             </div>
           </div>
         </div>
-
       </div>
 
       <!-- TAB CLIENTE: MEUS AGENDAMENTOS -->
@@ -376,7 +345,6 @@
             <i class="fa-solid fa-user-plus"></i> Entrar na Fila Agora
           </button>
         </div>
-
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div class="lg:col-span-2 space-y-3">
             <h3 class="text-base font-bold text-white flex items-center gap-2">
@@ -384,7 +352,6 @@
             </h3>
             <div id="client-queue-list" class="space-y-3"></div>
           </div>
-
           <div class="bg-dark-800 p-5 rounded-xl border border-dark-700 space-y-4 h-fit">
             <h3 class="text-sm font-bold text-gold-400 uppercase tracking-wider">Tempo Estimado Médio</h3>
             <div class="text-center py-4 bg-dark-900 rounded-xl border border-dark-700 space-y-1">
@@ -395,7 +362,7 @@
         </div>
       </div>
 
-      <!-- TAB CLIENTE: CLUBE VIP DE ASSINATURA -->
+      <!-- TAB CLIENTE: CLUBE VIP -->
       <div id="client-subtab-club" class="space-y-6 hidden">
         <div class="text-center max-w-2xl mx-auto space-y-2">
           <span class="bg-gold-500/20 text-gold-400 text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider">Planos Mensais sem Limite</span>
@@ -404,7 +371,6 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <!-- Plano 1 -->
           <div class="bg-dark-800 p-6 rounded-2xl border border-dark-700 flex flex-col justify-between space-y-6 hover:border-gold-500/50 transition-all">
             <div class="space-y-3">
               <span class="text-xs bg-dark-900 text-gold-400 border border-gold-500/30 px-3 py-1 rounded-full font-bold">Barba Club</span>
@@ -418,7 +384,6 @@
             <button onclick="subscribeClub('Barba Club', 89)" class="w-full py-3 rounded-xl bg-dark-700 hover:bg-gold-500 hover:text-dark-900 font-bold text-xs transition-all">Assinar Barba Club</button>
           </div>
 
-          <!-- Plano 2 -->
           <div class="bg-dark-800 p-6 rounded-2xl border-2 border-gold-500 gold-border-glow flex flex-col justify-between space-y-6 relative">
             <span class="absolute -top-3 right-6 bg-gold-500 text-dark-900 text-[10px] font-black px-3 py-1 rounded-full uppercase">Mais Vendido</span>
             <div class="space-y-3">
@@ -434,7 +399,6 @@
             <button onclick="subscribeClub('Cabelo VIP', 99)" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-gold-500 to-gold-600 text-dark-900 font-extrabold text-xs shadow-lg shadow-gold-500/20 hover:brightness-110 transition-all">Assinar Cabelo VIP</button>
           </div>
 
-          <!-- Plano 3 -->
           <div class="bg-dark-800 p-6 rounded-2xl border border-dark-700 flex flex-col justify-between space-y-6 hover:border-gold-500/50 transition-all">
             <div class="space-y-3">
               <span class="text-xs bg-dark-900 text-purple-400 border border-purple-500/30 px-3 py-1 rounded-full font-bold">Combo Executive</span>
@@ -450,7 +414,6 @@
           </div>
         </div>
 
-        <!-- Card de Assinatura Ativa -->
         <div id="active-subscription-card" class="hidden bg-dark-800 p-5 rounded-2xl border border-emerald-500/40 space-y-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -467,7 +430,7 @@
         </div>
       </div>
 
-      <!-- TAB CLIENTE: PROGRAMA DE FIDELIDADE -->
+      <!-- TAB CLIENTE: FIDELIDADE -->
       <div id="client-subtab-loyalty" class="space-y-6 hidden">
         <div class="bg-dark-800 p-6 rounded-2xl border border-gold-500/30 space-y-6">
           <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -481,39 +444,24 @@
               <p class="text-xs text-gray-400">Selos acumulados</p>
             </div>
           </div>
-
-          <!-- Barra de Progresso -->
           <div class="w-full bg-dark-900 rounded-full h-3 border border-dark-700 overflow-hidden">
             <div id="loyalty-progress-bar" class="bg-gradient-to-r from-gold-600 to-gold-400 h-full w-0 transition-all duration-500"></div>
           </div>
-
-          <!-- Grid dos 10 Selos -->
           <div class="grid grid-cols-5 sm:grid-cols-10 gap-3" id="loyalty-stamps-grid"></div>
-
-          <div class="flex justify-between items-center border-t border-dark-700 pt-4">
-            <span class="text-xs text-gray-400">Recompensa disponível ao atingir 10 selos.</span>
-            <button id="btn-redeem-reward" disabled onclick="redeemLoyaltyReward()" class="px-5 py-2.5 rounded-xl bg-gray-700 text-gray-500 font-bold text-xs cursor-not-allowed transition-all">
-              <i class="fa-solid fa-gift"></i> Resgatar Corte Grátis
-            </button>
-          </div>
         </div>
       </div>
 
-      <!-- TAB CLIENTE: LOJA DE PRODUTOS -->
+      <!-- TAB CLIENTE: LOJA -->
       <div id="client-subtab-shop" class="space-y-6 hidden">
         <div>
           <h2 class="text-2xl font-bold text-white font-serif">Produtos Exclusivos BrDias</h2>
           <p class="text-xs text-gray-400">Reserve produtos online e retire na barbearia no seu próximo atendimento.</p>
         </div>
-
         <div id="shop-products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
       </div>
-
     </div>
 
-    <!-- ========================================================================== -->
-    <!-- 2. VISÃO DO BARBEIRO                                                       -->
-    <!-- ========================================================================== -->
+    <!-- 2. VISÃO DO BARBEIRO -->
     <div id="role-view-barber" class="space-y-6 hidden">
       <div class="bg-dark-800 p-4 rounded-2xl border border-dark-700 flex justify-between items-center">
         <div>
@@ -528,9 +476,7 @@
       <div id="barber-appointments-list" class="space-y-3"></div>
     </div>
 
-    <!-- ========================================================================== -->
-    <!-- 3. VISÃO DO ADMIN                                                          -->
-    <!-- ========================================================================== -->
+    <!-- 3. VISÃO DO ADMIN -->
     <div id="role-view-admin" class="space-y-6 hidden">
       <div class="bg-dark-800 p-4 rounded-2xl border border-dark-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -558,7 +504,7 @@
         </div>
       </div>
 
-      <!-- CLIENTES VIP ASSINANTES ( COM STATUS DE PAGAMENTO ) -->
+      <!-- CLIENTES VIP COM BOTÃO DE PAGAMENTO -->
       <div class="bg-dark-800 p-5 rounded-xl border border-gold-500/30 space-y-4">
         <h3 class="text-base font-bold text-white"><i class="fa-solid fa-crown text-gold-400 mr-2"></i> Clientes com Assinatura VIP Ativa</h3>
         <div id="admin-vip-subscribers-list" class="space-y-2"></div>
@@ -567,7 +513,6 @@
       <!-- GERENCIAR BARBEIROS -->
       <div class="bg-dark-800 p-5 rounded-xl border border-dark-700 space-y-4">
         <h3 class="text-base font-bold text-white"><i class="fa-solid fa-user-gear text-gold-400 mr-2"></i> Gerenciar Barbeiros da Equipe</h3>
-        
         <form onsubmit="addNewBarber(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-dark-900 p-4 rounded-xl border border-dark-700">
           <div>
             <label class="block text-[11px] font-semibold text-gray-300 mb-1">Nome do Barbeiro</label>
@@ -583,7 +528,6 @@
             </button>
           </div>
         </form>
-
         <div id="admin-barbers-list" class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2"></div>
       </div>
 
@@ -600,7 +544,7 @@
 
   </main>
 
-  <!-- MODAL DE SUCESSO / WHATSAPP -->
+  <!-- MODAL DE SUCESSO -->
   <div id="modal-success" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
     <div class="bg-dark-800 border border-gold-500/40 rounded-2xl p-6 max-w-md w-full space-y-4 text-center">
       <div class="w-16 h-16 bg-gold-500/20 text-gold-400 rounded-full flex items-center justify-center text-3xl mx-auto"><i class="fa-solid fa-circle-check"></i></div>
@@ -613,9 +557,8 @@
     </div>
   </div>
 
-  <!-- JAVASCRIPT APP ENGINE COM FIREBASE CONFIGURADO -->
+  <!-- SCRIPT ENGINE COM FIREBASE -->
   <script>
-    // Configuração oficial integrada do seu projeto Firebase (Diassisleite)
     const firebaseConfig = {
       apiKey: "AIzaSyBMnJ9uvo8ypdIaBwBjz5hk7Qr8AN8zCfI",
       authDomain: "diassisleite-29361.firebaseapp.com",
@@ -689,7 +632,6 @@
       if (dateInput) dateInput.value = tomorrowStr;
     };
 
-    // ================= MOTOR DE TEMPO REAL FIREBASE =================
     function initRealtimeSync() {
       if (isFirebaseReady && db) {
         db.ref('barbers').on('value', snapshot => {
@@ -736,7 +678,6 @@
       }
     }
 
-    // ================= PWA INSTALL ENGINE =================
     function initPWAEngine() {
       const manifestData = {
         "name": "BrDias Barbearia",
@@ -745,13 +686,7 @@
         "display": "standalone",
         "background_color": "#0E0F12",
         "theme_color": "#0E0F12",
-        "icons": [
-          {
-            "src": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=192&q=80",
-            "sizes": "192x192",
-            "type": "image/png"
-          }
-        ]
+        "icons": [{ "src": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=192&q=80", "sizes": "192x192", "type": "image/png" }]
       };
       const stringManifest = JSON.stringify(manifestData);
       const blob = new Blob([stringManifest], { type: 'application/json' });
@@ -783,7 +718,7 @@
           deferredPrompt = null;
         });
       } else {
-        alert('Para instalar o aplicativo no seu telemóvel, abra o menu do navegador (três pontos no canto superior direito) e selecione "Adicionar ao ecrã inicial" ou "Instalar aplicação".');
+        alert('Para instalar o app, abra o menu do navegador e selecione "Adicionar ao ecrã inicial" ou "Instalar aplicação".');
       }
     }
 
@@ -825,7 +760,7 @@
     function loginAsAdmin(e) {
       e.preventDefault();
       const pass = document.getElementById('login-admin-pass').value;
-      if (pass !== 'admin123' && pass !== '123') return alert('Senha incorreta! Use admin123.');
+      if (pass !== 'admin123' && pass !== '123') return alert('Senha incorreta!');
       currentUser = { role: 'admin', name: 'Administrador' };
       localStorage.setItem(STORAGE_SESSION, JSON.stringify(currentUser));
       bootApp();
@@ -869,7 +804,6 @@
       }
     }
 
-    // ================= CLIENT ENGINE =================
     function switchClientTab(tab) {
       ['booking', 'my-bookings', 'queue', 'club', 'loyalty', 'shop'].forEach(t => {
         document.getElementById(`client-subtab-${t}`).classList.add('hidden');
@@ -927,7 +861,6 @@
     function updateClientStep1Summary() {
       const total = selectedServices.reduce((sum, id) => sum + (SERVICES.find(s => s.id === id)?.price || 0), 0);
       const time = selectedServices.reduce((sum, id) => sum + (SERVICES.find(s => s.id === id)?.duration || 0), 0);
-      
       document.getElementById('c-step1-total-price').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
       document.getElementById('c-step1-total-time').innerHTML = `<i class="fa-regular fa-clock"></i> ${time} min`;
 
@@ -1005,7 +938,6 @@
         document.getElementById('c-summary-services').innerHTML = selectedServices.map(id => `<li>${SERVICES.find(s => s.id === id)?.name}</li>`).join('');
         const total = selectedServices.reduce((sum, id) => sum + (SERVICES.find(s => s.id === id)?.price || 0), 0);
         document.getElementById('c-summary-total').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
-        
         document.getElementById('c-input-name').value = currentUser.name || '';
         document.getElementById('c-input-phone').value = currentUser.phone || '';
       }
@@ -1093,7 +1025,6 @@
           <span class="text-gray-400">Entrada: ${w.time}</span>
         </div>
       `).join('') || '<p class="text-xs text-gray-400">A fila presencial está vazia no momento.</p>';
-      
       document.getElementById('queue-est-wait').innerText = `${waitlist.length * 30} min`;
     }
 
@@ -1109,7 +1040,6 @@
 
     function subscribeClub(planName, price) {
       const subs = JSON.parse(localStorage.getItem('brdias_vip_subs_list') || '[]');
-      
       const existingIdx = subs.findIndex(s => s.clientName === currentUser.name);
       const newSub = {
         id: 'sub-' + Date.now(),
@@ -1130,7 +1060,6 @@
 
       syncDataToCloud('brdias_vip_subs_list', subs);
       localStorage.setItem('brdias_vip_sub', JSON.stringify(newSub));
-
       alert(`Parabéns! Assinatura do ${planName} realizada com sucesso.`);
       checkActiveSubscription();
     }
@@ -1193,7 +1122,6 @@
       `).join('');
     }
 
-    // ================= BARBER & ADMIN ENGINE =================
     function renderBarberDashboard() {
       const appts = JSON.parse(localStorage.getItem(STORAGE_APPT) || '[]');
       const myAppts = appts.filter(a => a.barberId === currentUser.id && a.status !== 'Cancelado');
@@ -1220,10 +1148,8 @@
       const rev = active.reduce((sum, a) => sum + a.totalPrice, 0);
       document.getElementById('admin-stat-revenue').innerText = `R$ ${rev.toFixed(2).replace('.', ',')}`;
       document.getElementById('admin-stat-commissions').innerText = `R$ ${(rev * 0.5).toFixed(2).replace('.', ',')}`;
-
       document.getElementById('admin-whatsapp-input').value = localStorage.getItem(STORAGE_WA) || '558488251134';
 
-      // Renderizar Clientes VIP Assinantes no Admin com Botão de Pagamento
       const vipSubs = JSON.parse(localStorage.getItem('brdias_vip_subs_list') || '[]');
       const vipContainer = document.getElementById('admin-vip-subscribers-list');
       vipContainer.innerHTML = vipSubs.map(sub => `
@@ -1243,7 +1169,6 @@
         </div>
       `).join('') || '<p class="text-xs text-gray-400">Nenhum cliente com assinatura VIP ativa no momento.</p>';
 
-      // Renderizar Barbeiros Cadastrados no Admin
       const barbersContainer = document.getElementById('admin-barbers-list');
       barbersContainer.innerHTML = BARBERS.map(b => `
         <div class="bg-dark-900 p-3 rounded-lg border border-dark-700 flex items-center justify-between text-xs">
