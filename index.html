@@ -887,9 +887,20 @@
         (apt.notes ? `📝 *Obs:* ${apt.notes}\n` : '') +
         `\nObrigado! Aguardo o atendimento.`;
 
-      const encodedMessage = encodeURIComponent(message);
-      // Fictitious Barbearia WhatsApp Number
-      const phoneNum = '84988251134';
+     // Limpa o número garantindo apenas dígitos e adiciona o prefixo do Brasil (55) se não tiver
+let phoneNum = '84988251134'.replace(/\D/g, '');
+if (!phoneNum.startsWith('55')) {
+    phoneNum = '55' + phoneNum;
+}
+
+// Codifica APENAS a mensagem
+const encodedMessage = encodeURIComponent(message);
+
+// Link correto do WhatsApp
+const whatsappUrl = `https://wa.me/${phoneNum}?text=${encodedMessage}`;
+
+// Para abrir a conversa:
+window.open(whatsappUrl, '_blank');
       
       document.getElementById('btn-whatsapp-send').href = `https://wa.me/${phoneNum}?text=${encodedMessage}`;
       document.getElementById('modal-success').classList.remove('hidden');
