@@ -554,7 +554,7 @@
         </div>
       </div>
 
-      <!-- CLIENTES VIP ASSINANTES (NOVO BLOCO ADICIONADO NO ADMIN) -->
+      <!-- CLIENTES VIP ASSINANTES ( COM STATUS DE PAGAMENTO ) -->
       <div class="bg-dark-800 p-5 rounded-xl border border-gold-500/30 space-y-4">
         <h3 class="text-base font-bold text-white"><i class="fa-solid fa-crown text-gold-400 mr-2"></i> Clientes com Assinatura VIP Ativa</h3>
         <div id="admin-vip-subscribers-list" class="space-y-2"></div>
@@ -1036,7 +1036,6 @@
     function subscribeClub(planName, price) {
       const subs = JSON.parse(localStorage.getItem('brdias_vip_subs_list') || '[]');
       
-      // Evitar duplicatas do mesmo cliente
       const existingIdx = subs.findIndex(s => s.clientName === currentUser.name);
       const newSub = {
         id: 'sub-' + Date.now(),
@@ -1044,10 +1043,12 @@
         clientPhone: currentUser.phone || '(84) 99999-9999',
         planName,
         price,
-        date: new Date().toLocaleDateString()
+        date: new Date().toLocaleDateString(),
+        pago: false // Inicia como pendente de pagamento na assinatura
       };
 
       if (existingIdx >= 0) {
+        newSub.pago = subs[existingIdx].pago; // Mantém status se já existia
         subs[existingIdx] = newSub;
       } else {
         subs.push(newSub);
@@ -1148,16 +1149,23 @@
 
       document.getElementById('admin-whatsapp-input').value = localStorage.getItem(STORAGE_WA) || '558488251134';
 
-      // Renderizar Clientes VIP Assinantes no Admin
+      // Renderizar Clientes VIP Assinantes no Admin com Botão de Pagamento
       const vipSubs = JSON.parse(localStorage.getItem('brdias_vip_subs_list') || '[]');
       const vipContainer = document.getElementById('admin-vip-subscribers-list');
       vipContainer.innerHTML = vipSubs.map(sub => `
-        <div class="bg-dark-900 p-3 rounded-lg border border-dark-700 flex items-center justify-between text-xs">
+        <div class="bg-dark-900 p-3 rounded-lg border border-dark-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
           <div>
             <p class="font-bold text-white text-sm"><i class="fa-solid fa-user text-gold-400 mr-1"></i> ${sub.clientName} <span class="text-gray-400 font-normal">(${sub.clientPhone})</span></p>
-            <p class="text-[11px] text-gold-400 font-semibold mt-0.5">Plano: ${sub.planName} (R$ ${sub.price.toFixed(2)}) • <span class="text-gray-400 font-normal">Assinado em: ${sub.date}</span></p>
+            <p class="text-[11px] text-gold-400 font-semibold mt-0.5">Plano: ${sub.planName} (R$ ${sub.price.toFixed(2)}) • <span class="text-gray-400 font-normal">Data: ${sub.date}</span></p>
           </div>
-          <span class="bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded font-bold uppercase text-[10px]">Ativo</span>
+          <div class="flex items-center gap-2">
+            <button onclick="toggleVipPayment('${sub.id}')" class="px-3 py-1.5 rounded font-bold text-[11px] transition-all ${
+              sub.pago ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30' : 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30'
+            }">
+              <i class="fa-solid ${sub.pago ? 'fa-circle-check' : 'fa-clock'} mr-1"></i> ${sub.pago ? 'Pago' : 'Pendente'}
+            </button>
+            <button onclick="deleteVipSub('${sub.id}')" class="text-red-400 hover:text-red-300 p-1"><i class="fa-solid fa-trash"></i></button>
+          </div>
         </div>
       `).join('') || '<p class="text-xs text-gray-400">Nenhum cliente com assinatura VIP ativa no momento.</p>';
 
@@ -1193,6 +1201,22 @@
           </div>
         `;
       }).join('') || '<p class="text-xs text-gray-400">Sem agendamentos registrados.</p>';
+    }
+
+    function toggleVipPayment(id) {
+      let subs = JSON.parse(localStorage.getItem('brdias_vip_subs_list') || '[]');
+      subs = subs.map(s => s.id === id ? {...s, pago: !s.pago} : s);
+      localStorage.setItem('brdias_vip_subs_list', JSON.stringify(subs));
+      renderAdminDashboard();
+    }
+
+    function deleteVipSub(id) {
+      if (confirm('Deseja remover esta assinatura VIP?')) {
+        let subs = JSON.parse(localStorage.getItem('brdias_vip_subs_list') || '[]');
+        subs = subs.filter(s => s.id !== id);
+        localStorage.setItem('brdias_vip_subs_list', JSON.stringify(subs));
+        renderAdminDashboard();
+      }
     }
 
     function addNewBarber(e) {
