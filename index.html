@@ -558,13 +558,13 @@
         </div>
       </div>
 
-      <!-- CLIENTES VIP ASSINANTES ( COM STATUS DE PAGAMENTO EM TEMPO REAL ) -->
+      <!-- CLIENTES VIP ASSINANTES ( COM STATUS DE PAGAMENTO ) -->
       <div class="bg-dark-800 p-5 rounded-xl border border-gold-500/30 space-y-4">
         <h3 class="text-base font-bold text-white"><i class="fa-solid fa-crown text-gold-400 mr-2"></i> Clientes com Assinatura VIP Ativa</h3>
         <div id="admin-vip-subscribers-list" class="space-y-2"></div>
       </div>
 
-      <!-- GERENCIAR BARBEIROS EM TEMPO REAL -->
+      <!-- GERENCIAR BARBEIROS -->
       <div class="bg-dark-800 p-5 rounded-xl border border-dark-700 space-y-4">
         <h3 class="text-base font-bold text-white"><i class="fa-solid fa-user-gear text-gold-400 mr-2"></i> Gerenciar Barbeiros da Equipe</h3>
         
@@ -613,33 +613,28 @@
     </div>
   </div>
 
-  <!-- JAVASCRIPT ENGINE COM REALTIME CLOUD SYNC -->
+  <!-- JAVASCRIPT APP ENGINE COM FIREBASE CONFIGURADO -->
   <script>
-    // =========================================================================
-    // CONFIGURAÇÃO DO FIREBASE (Insira suas chaves do Firebase aqui)
-    // =========================================================================
+    // Configuração oficial integrada do seu projeto Firebase (Diassisleite)
     const firebaseConfig = {
-      apiKey: "SUA_API_KEY",
-      authDomain: "seu-projeto.firebaseapp.com",
-      databaseURL: "https://seu-projeto-default-rtdb.firebaseio.com",
-      projectId: "seu-projeto",
-      storageBucket: "seu-projeto.appspot.com",
-      messagingSenderId: "1234567890",
-      appId: "1:1234567890:web:abcdef123456"
+      apiKey: "AIzaSyBMnJ9uvo8ypdIaBwBjz5hk7Qr8AN8zCfI",
+      authDomain: "diassisleite-29361.firebaseapp.com",
+      databaseURL: "https://diassisleite-29361-default-rtdb.firebaseio.com",
+      projectId: "diassisleite-29361",
+      storageBucket: "diassisleite-29361.firebasestorage.app",
+      messagingSenderId: "634720606951",
+      appId: "1:634720606951:web:07f05f1c99ed9e91742042"
     };
 
     let db = null;
     let isFirebaseReady = false;
 
-    // Tenta inicializar o Firebase se as chaves forem fornecidas
     try {
-      if (firebaseConfig.apiKey !== "SUA_API_KEY") {
-        firebase.initializeApp(firebaseConfig);
-        db = firebase.database();
-        isFirebaseReady = true;
-      }
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.database();
+      isFirebaseReady = true;
     } catch (e) {
-      console.warn("Firebase não configurado. Usando modo de sincronização via LocalStorage dinâmico.");
+      console.warn("Erro ao iniciar Firebase:", e);
     }
 
     const SERVICES = [
@@ -694,9 +689,9 @@
       if (dateInput) dateInput.value = tomorrowStr;
     };
 
-    // ================= MOTOR DE TEMPO REAL =================
+    // ================= MOTOR DE TEMPO REAL FIREBASE =================
     function initRealtimeSync() {
-      if (isFirebaseReady) {
+      if (isFirebaseReady && db) {
         db.ref('barbers').on('value', snapshot => {
           const val = snapshot.val();
           if (val) {
@@ -717,20 +712,12 @@
           localStorage.setItem('brdias_vip_subs_list', JSON.stringify(val));
           refreshCurrentUI();
         });
-      } else {
-        // Sincronização entre abas do mesmo navegador sem recarregar a página
-        window.addEventListener('storage', (e) => {
-          if (['brdias_barbers_v3', STORAGE_APPT, 'brdias_vip_subs_list'].includes(e.key)) {
-            if (e.key === 'brdias_barbers_v3') BARBERS = JSON.parse(e.newValue || '[]');
-            refreshCurrentUI();
-          }
-        });
       }
     }
 
     function syncDataToCloud(key, value) {
       localStorage.setItem(key, JSON.stringify(value));
-      if (isFirebaseReady) {
+      if (isFirebaseReady && db) {
         if (key === 'brdias_barbers_v3') db.ref('barbers').set(value);
         if (key === STORAGE_APPT) db.ref('appointments').set(value);
         if (key === 'brdias_vip_subs_list') db.ref('vip_subs').set(value);
