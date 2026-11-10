@@ -529,7 +529,7 @@
           <h2 class="text-xl font-bold text-white font-serif">Painel Executivo</h2>
         </div>
         <div class="flex items-center gap-2 w-full sm:w-auto">
-          <input type="text" id="admin-whatsapp-input" placeholder="84988251134" class="bg-dark-900 border border-dark-600 rounded-lg px-3 py-2 text-xs text-white outline-none w-full">
+          <input type="text" id="admin-whatsapp-input" placeholder="5584988251134" class="bg-dark-900 border border-dark-600 rounded-lg px-3 py-2 text-xs text-white outline-none w-full">
           <button onclick="saveAdminWhatsApp()" class="px-4 py-2 bg-gold-500 text-dark-900 font-bold rounded-lg text-xs whitespace-nowrap">Salvar WhatsApp</button>
         </div>
       </div>
@@ -1015,7 +1015,7 @@
       document.getElementById('admin-stat-revenue').innerText = `R$ ${rev.toFixed(2).replace('.', ',')}`;
       document.getElementById('admin-stat-commissions').innerText = `R$ ${(rev * 0.5).toFixed(2).replace('.', ',')}`;
 
-      document.getElementById('admin-whatsapp-input').value = localStorage.getItem(STORAGE_WA) || '55849888251134';
+      document.getElementById('admin-whatsapp-input').value = localStorage.getItem(STORAGE_WA) || '5584988251134';
 
       document.getElementById('admin-all-appointments').innerHTML = appts.map(a => {
         const barber = BARBERS.find(b => b.id === a.barberId);
