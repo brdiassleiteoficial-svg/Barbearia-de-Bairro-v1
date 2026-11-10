@@ -559,7 +559,12 @@
       </div>
 
       <div class="bg-dark-800 p-5 rounded-xl border border-dark-700 space-y-4">
-        <h3 class="text-base font-bold text-white">Todos os Agendamentos Cadastrados</h3>
+        <div class="flex justify-between items-center">
+          <h3 class="text-base font-bold text-white">Todos os Agendamentos Cadastrados</h3>
+          <button onclick="clearCompletedAppointments()" class="px-3 py-1.5 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/30 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-trash-can"></i> Limpar Concluídos
+          </button>
+        </div>
         <div id="admin-all-appointments" class="space-y-2"></div>
       </div>
     </div>
@@ -632,7 +637,6 @@
 
     // ================= PWA INSTALL ENGINE =================
     function initPWAEngine() {
-      // Injetar Manifesto Dinâmico via Blob para garantir compatibilidade móvel
       const manifestData = {
         "name": "BrDias Barbearia",
         "short_name": "BrDias",
@@ -653,7 +657,6 @@
       const manifestURL = URL.createObjectURL(blob);
       document.getElementById('dynamic-manifest').setAttribute('href', manifestURL);
 
-      // Registrar Service Worker embutido via Blob
       if ('serviceWorker' in navigator) {
         const swCode = `self.addEventListener('fetch', function(event) { event.respondWith(fetch(event.request).catch(() => caches.match(event.request))); });`;
         const swBlob = new Blob([swCode], { type: 'text/javascript' });
@@ -661,7 +664,6 @@
         navigator.serviceWorker.register(swUrl).catch(() => {});
       }
 
-      // Capturar evento de instalação do navegador
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
@@ -1024,7 +1026,7 @@
 
     function renderLoyalty() {
       const grid = document.getElementById('loyalty-stamps-grid');
-      const stamps = 3; // Exemplo de selos acumulados
+      const stamps = 3;
       document.getElementById('loyalty-stamps-count').innerText = `${stamps} / 10`;
       document.getElementById('loyalty-progress-bar').style.width = `${(stamps / 10) * 100}%`;
 
@@ -1085,15 +1087,46 @@
 
       document.getElementById('admin-all-appointments').innerHTML = appts.map(a => {
         const barber = BARBERS.find(b => b.id === a.barberId);
+        const isDone = a.status === 'Concluído';
         return `
-          <div class="bg-dark-900 p-3 rounded-lg border border-dark-700 flex justify-between items-center text-xs">
+          <div class="bg-dark-900 p-3 rounded-lg border border-dark-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-xs">
             <div>
-              <strong class="text-gold-400">${a.date} - ${a.time}</strong> | ${a.clientName} (${barber?.name}) - <span class="text-emerald-400">${a.status}</span>
+              <strong class="text-gold-400">${a.date.split('-').reverse().join('/')} - ${a.time}</strong> | <span class="text-white font-semibold">${a.clientName}</span> (${barber?.name}) 
+              <span class="ml-2 px-2 py-0.5 rounded text-[10px] font-bold ${isDone ? 'bg-emerald-500/20 text-emerald-400' : 'bg-blue-500/20 text-blue-400'}">${a.status || 'Confirmado'}</span>
             </div>
-            <span class="text-white font-bold">R$ ${a.totalPrice.toFixed(2)}</span>
+            <div class="flex items-center gap-2">
+              <span class="text-white font-bold mr-2">R$ ${a.totalPrice.toFixed(2)}</span>
+              ${!isDone ? `<button onclick="completeAppointment('${a.id}')" class="px-2.5 py-1 bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600 hover:text-white rounded font-bold transition-all"><i class="fa-solid fa-check"></i> Concluir</button>` : ''}
+              <button onclick="deleteAppointment('${a.id}')" class="px-2.5 py-1 bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white rounded font-bold transition-all"><i class="fa-solid fa-trash"></i> Excluir</button>
+            </div>
           </div>
         `;
       }).join('') || '<p class="text-xs text-gray-400">Sem agendamentos registrados.</p>';
+    }
+
+    function completeAppointment(id) {
+      let appts = JSON.parse(localStorage.getItem(STORAGE_APPT) || '[]');
+      appts = appts.map(a => a.id === id ? {...a, status: 'Concluído'} : a);
+      localStorage.setItem(STORAGE_APPT, JSON.stringify(appts));
+      renderAdminDashboard();
+    }
+
+    function deleteAppointment(id) {
+      if (confirm('Deseja realmente excluir este agendamento do sistema?')) {
+        let appts = JSON.parse(localStorage.getItem(STORAGE_APPT) || '[]');
+        appts = appts.filter(a => a.id !== id);
+        localStorage.setItem(STORAGE_APPT, JSON.stringify(appts));
+        renderAdminDashboard();
+      }
+    }
+
+    function clearCompletedAppointments() {
+      if (confirm('Deseja excluir todos os agendamentos marcados como Concluído?')) {
+        let appts = JSON.parse(localStorage.getItem(STORAGE_APPT) || '[]');
+        appts = appts.filter(a => a.status !== 'Concluído');
+        localStorage.setItem(STORAGE_APPT, JSON.stringify(appts));
+        renderAdminDashboard();
+      }
     }
 
     function saveAdminWhatsApp() {
