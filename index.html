@@ -82,46 +82,104 @@
 </head>
 <body class="bg-dark-900 text-gray-100 font-sans antialiased min-h-screen flex flex-col selection:bg-gold-500 selection:text-dark-900 pb-20 md:pb-0">
 
-  <!-- TOP HEADER & ROLE SWITCHER -->
-  <header class="sticky top-0 z-40 bg-dark-950/90 backdrop-blur-md border-b border-dark-700/80 px-4 py-3">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+  <!-- ========================================================================== -->
+  <!-- TELA DE LOGIN / AUTENTICAÇÃO INICIAL                                      -->
+  <!-- ========================================================================== -->
+  <div id="auth-screen" class="fixed inset-0 z-50 bg-dark-950 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="max-w-md w-full bg-dark-800 border border-gold-500/30 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative">
       
-      <!-- Brand Logo -->
-      <div class="flex items-center justify-between w-full md:w-auto">
-        <div class="flex items-center space-x-3 cursor-pointer" onclick="setRole('client'); switchClientTab('booking');">
-          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gold-400 to-gold-700 flex items-center justify-center text-dark-900 shadow-lg font-serif font-black text-xl">
-            B
-          </div>
-          <div>
-            <h1 class="font-serif font-bold text-lg tracking-wider text-white leading-tight">BrDias <span class="text-gold-500 font-sans text-xs uppercase tracking-widest block font-semibold">Barbearia Executive</span></h1>
-          </div>
+      <!-- Logo Branding Header -->
+      <div class="text-center space-y-2">
+        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-gold-400 to-gold-700 flex items-center justify-center text-dark-900 font-serif font-black text-3xl shadow-xl mx-auto">
+          B
         </div>
-
-        <!-- Mobile PWA Install trigger -->
-        <button id="pwa-install-btn" class="hidden md:hidden items-center space-x-1 bg-gold-500/10 text-gold-400 border border-gold-500/30 text-xs px-2.5 py-1 rounded-full">
-          <i class="fa-solid fa-download"></i> App
-        </button>
+        <h1 class="font-serif font-bold text-2xl tracking-wider text-white">BrDias <span class="text-gold-500 font-sans text-xs uppercase tracking-widest block font-semibold">Barbearia Executive</span></h1>
+        <p class="text-xs text-gray-400">Selecione seu perfil de acesso para continuar</p>
       </div>
 
-      <!-- Role Switcher & App Actions -->
-      <div class="flex items-center space-x-2 w-full md:w-auto justify-end overflow-x-auto">
-        <button id="pwa-install-btn-desktop" class="hidden md:flex items-center space-x-1.5 bg-gold-500/10 text-gold-400 border border-gold-500/30 text-xs px-3 py-1.5 rounded-full hover:bg-gold-500 hover:text-dark-900 transition-all font-medium">
-          <i class="fa-solid fa-download"></i>
-          <span>Instalar App</span>
-        </button>
+      <!-- Tabs de Perfil de Login -->
+      <div class="grid grid-cols-3 gap-1 bg-dark-900 p-1.5 rounded-xl border border-dark-700 text-xs font-semibold">
+        <button id="auth-tab-client" onclick="switchAuthTab('client')" class="py-2.5 rounded-lg bg-gold-500 text-dark-900 font-bold transition-all">Cliente</button>
+        <button id="auth-tab-barber" onclick="switchAuthTab('barber')" class="py-2.5 rounded-lg text-gray-400 hover:text-white transition-all">Barbeiro</button>
+        <button id="auth-tab-admin" onclick="switchAuthTab('admin')" class="py-2.5 rounded-lg text-gray-400 hover:text-white transition-all">Admin</button>
+      </div>
 
-        <!-- Dynamic Role Selector -->
-        <div class="bg-dark-800 p-1 rounded-xl border border-dark-700 flex text-xs font-semibold">
-          <button id="role-btn-client" onclick="setRole('client')" class="px-3 py-1.5 rounded-lg bg-gold-500 text-dark-900 shadow font-bold transition-all flex items-center gap-1.5">
-            <i class="fa-solid fa-user"></i> <span>Cliente</span>
-          </button>
-          <button id="role-btn-barber" onclick="setRole('barber')" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition-all flex items-center gap-1.5">
-            <i class="fa-solid fa-scissors"></i> <span>Barbeiro</span>
-          </button>
-          <button id="role-btn-admin" onclick="setRole('admin')" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition-all flex items-center gap-1.5">
-            <i class="fa-solid fa-shield-halved"></i> <span>Dono / Admin</span>
-          </button>
+      <!-- LOGIN FORM: CLIENTE -->
+      <form id="auth-form-client" onsubmit="loginAsClient(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1">Seu Nome *</label>
+          <input type="text" id="login-client-name" required placeholder="Ex: Lucas Silva" class="w-full bg-dark-900 border border-dark-600 rounded-xl p-3 text-sm text-white focus:border-gold-500 outline-none">
         </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1">Seu WhatsApp *</label>
+          <input type="tel" id="login-client-phone" required placeholder="(84) 99999-9999" class="w-full bg-dark-900 border border-dark-600 rounded-xl p-3 text-sm text-white focus:border-gold-500 outline-none">
+        </div>
+        <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-gold-500 to-gold-600 text-dark-900 font-extrabold text-sm shadow-lg shadow-gold-500/10 hover:brightness-110 transition-all">
+          Entrar como Cliente <i class="fa-solid fa-arrow-right ml-1"></i>
+        </button>
+      </form>
+
+      <!-- LOGIN FORM: BARBEIRO -->
+      <form id="auth-form-barber" onsubmit="loginAsBarber(event)" class="space-y-4 hidden">
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1">Selecione o Barbeiro</label>
+          <select id="login-barber-id" class="w-full bg-dark-900 border border-dark-600 rounded-xl p-3 text-sm text-white focus:border-gold-500 outline-none">
+            <option value="b1">Diego Dias (Master)</option>
+            <option value="b2">Mateus Santos</option>
+            <option value="b3">Gabriel Lima</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1">PIN / Senha de Acesso (Padrão: 1234)</label>
+          <input type="password" id="login-barber-pin" required placeholder="Digite seu PIN" class="w-full bg-dark-900 border border-dark-600 rounded-xl p-3 text-sm text-white focus:border-gold-500 outline-none">
+        </div>
+        <button type="submit" class="w-full py-3.5 rounded-xl bg-gold-500 text-dark-900 font-extrabold text-sm shadow-lg hover:brightness-110 transition-all">
+          Acessar Agenda do Barbeiro
+        </button>
+      </form>
+
+      <!-- LOGIN FORM: ADMIN -->
+      <form id="auth-form-admin" onsubmit="loginAsAdmin(event)" class="space-y-4 hidden">
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1">Senha do Administrador (Padrão: admin123)</label>
+          <input type="password" id="login-admin-pass" required placeholder="Digite a senha master" class="w-full bg-dark-900 border border-dark-600 rounded-xl p-3 text-sm text-white focus:border-gold-500 outline-none">
+        </div>
+        <button type="submit" class="w-full py-3.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-extrabold text-sm shadow-lg transition-all">
+          Acessar Painel Executivo
+        </button>
+      </form>
+
+      <div class="text-center border-t border-dark-700 pt-3">
+        <p class="text-[11px] text-gray-500">Sistema BrDias Barbearia v2.0 • Protegido & PWA Ready</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP HEADER (Só aparece pós-login) -->
+  <header id="main-header" class="hidden sticky top-0 z-40 bg-dark-950/90 backdrop-blur-md border-b border-dark-700/80 px-4 py-3">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gold-400 to-gold-700 flex items-center justify-center text-dark-900 shadow-lg font-serif font-black text-xl">
+          B
+        </div>
+        <div>
+          <h1 class="font-serif font-bold text-lg tracking-wider text-white leading-tight">BrDias <span class="text-gold-500 font-sans text-xs uppercase tracking-widest block font-semibold">Barbearia</span></h1>
+        </div>
+      </div>
+
+      <!-- Active User Info & Logout -->
+      <div class="flex items-center space-x-3">
+        <div class="text-right hidden sm:block">
+          <p id="user-badge-name" class="text-xs font-bold text-white">Lucas Silva</p>
+          <p id="user-badge-role" class="text-[10px] text-gold-400 uppercase font-semibold">Cliente</p>
+        </div>
+        
+        <button onclick="logout()" class="px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white border border-red-500/20 text-xs font-bold transition-all flex items-center gap-1.5">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Sair</span>
+        </button>
       </div>
 
     </div>
@@ -752,9 +810,9 @@
     ];
 
     const BARBERS = [
-      { id: 'b1', name: 'Diego Dias', role: 'Master Barber / Proprietário', exp: 'Cortes Vintage & Navallado', photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80' },
-      { id: 'b2', name: 'Mateus Santos', role: 'Barbeiro Especialista', exp: 'Fade Moderno & Freehand', photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80' },
-      { id: 'b3', name: 'Gabriel Lima', role: 'Barbeiro & Visagista', exp: 'Barba Alinhada & Barboterapia', photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80' }
+      { id: 'b1', name: 'Diego Dias', role: 'Master Barber / Proprietário', exp: 'Cortes Vintage & Navallado', pin: '1234', photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80' },
+      { id: 'b2', name: 'Mateus Santos', role: 'Barbeiro Especialista', exp: 'Fade Moderno & Freehand', pin: '1234', photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80' },
+      { id: 'b3', name: 'Gabriel Lima', role: 'Barbeiro & Visagista', exp: 'Barba Alinhada & Barboterapia', pin: '1234', photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80' }
     ];
 
     const PRODUCTS = [
@@ -772,9 +830,10 @@
     const KEY_STAMPS = 'brdias_stamps_v2';
     const KEY_SUB = 'brdias_sub_v2';
     const KEY_WHATSAPP = 'brdias_whatsapp_v2';
+    const KEY_AUTH_USER = 'brdias_auth_user_v2';
 
     // GLOBAL STATE VARIABLES
-    let currentRole = 'client'; // 'client', 'barber', 'admin'
+    let currentUser = null; // { role: 'client'|'barber'|'admin', name: string, phone?: string, barberId?: string }
     let activeClientTab = 'booking';
     let selectedBarberId = 'b1';
 
@@ -791,6 +850,16 @@
       initPWA();
       seedInitialData();
 
+      // Check active session
+      const savedUser = localStorage.getItem(KEY_AUTH_USER);
+      if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        activateUserSession();
+      } else {
+        document.getElementById('auth-screen').classList.remove('hidden');
+        document.getElementById('main-header').classList.add('hidden');
+      }
+
       // Dates
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
@@ -806,72 +875,120 @@
       const savedWa = localStorage.getItem(KEY_WHATSAPP) || '5584988251134';
       document.getElementById('admin-whatsapp-num').value = savedWa;
 
-      // Initial Render
       renderClientServices();
       renderClientBarbers();
       renderShopProducts();
       renderQueueList();
       renderLoyaltyGrid();
       updateSubscriptionUI();
-      renderBarberView();
-      renderAdminFull();
     };
 
-    function seedInitialData() {
-      const todayStr = new Date().toISOString().split('T')[0];
+    /* ==========================================================================
+       AUTHENTICATION & USER SESSION LOGIC
+       ========================================================================== */
+    function switchAuthTab(type) {
+      document.getElementById('auth-tab-client').className = "py-2.5 rounded-lg text-gray-400 hover:text-white transition-all";
+      document.getElementById('auth-tab-barber').className = "py-2.5 rounded-lg text-gray-400 hover:text-white transition-all";
+      document.getElementById('auth-tab-admin').className = "py-2.5 rounded-lg text-gray-400 hover:text-white transition-all";
 
-      if (!localStorage.getItem(KEY_APPOINTMENTS)) {
-        const initialApts = [
-          { id: 'apt-1', clientName: 'Lucas Silva', clientPhone: '84999991111', barberId: 'b1', serviceIds: ['s3'], date: todayStr, time: '10:00', totalPrice: 70.00, status: 'Confirmado', createdAt: new Date().toISOString() },
-          { id: 'apt-2', clientName: 'Roberto Lima', clientPhone: '84988882222', barberId: 'b2', serviceIds: ['s1'], date: todayStr, time: '14:30', totalPrice: 45.00, status: 'Concluído', createdAt: new Date().toISOString() }
-        ];
-        localStorage.setItem(KEY_APPOINTMENTS, JSON.stringify(initialApts));
-      }
+      document.getElementById('auth-form-client').classList.add('hidden');
+      document.getElementById('auth-form-barber').classList.add('hidden');
+      document.getElementById('auth-form-admin').classList.add('hidden');
 
-      if (!localStorage.getItem(KEY_QUEUE)) {
-        const initialQueue = [
-          { id: 'q-1', clientName: 'Guilherme Santos', clientPhone: '84977773333', barberId: 'any', enteredAt: '13:40', status: 'Aguardando' },
-          { id: 'q-2', clientName: 'Fernando Costa', clientPhone: '84966664444', barberId: 'b1', enteredAt: '14:00', status: 'Em Atendimento' }
-        ];
-        localStorage.setItem(KEY_QUEUE, JSON.stringify(initialQueue));
-      }
-
-      if (!localStorage.getItem(KEY_NOTES)) {
-        const initialNotes = [
-          { id: 'n-1', clientName: 'Lucas Silva', note: 'Corte degradê médio (pente 1.5), tesoura leve em cima. Barba desenhada.', date: todayStr }
-        ];
-        localStorage.setItem(KEY_NOTES, JSON.stringify(initialNotes));
-      }
-
-      if (!localStorage.getItem(KEY_STAMPS)) {
-        localStorage.setItem(KEY_STAMPS, '4');
+      if (type === 'client') {
+        document.getElementById('auth-tab-client').className = "py-2.5 rounded-lg bg-gold-500 text-dark-900 font-bold transition-all";
+        document.getElementById('auth-form-client').classList.remove('hidden');
+      } else if (type === 'barber') {
+        document.getElementById('auth-tab-barber').className = "py-2.5 rounded-lg bg-gold-500 text-dark-900 font-bold transition-all";
+        document.getElementById('auth-form-barber').classList.remove('hidden');
+      } else if (type === 'admin') {
+        document.getElementById('auth-tab-admin').className = "py-2.5 rounded-lg bg-gold-500 text-dark-900 font-bold transition-all";
+        document.getElementById('auth-form-admin').classList.remove('hidden');
       }
     }
 
-    /* ==========================================================================
-       3. ROLE & TAB SWITCHER
-       ========================================================================== */
-    function setRole(role) {
-      currentRole = role;
+    function loginAsClient(e) {
+      e.preventDefault();
+      const name = document.getElementById('login-client-name').value.trim();
+      const phone = document.getElementById('login-client-phone').value.trim();
+
+      if (!name || !phone) return;
+
+      currentUser = { role: 'client', name, phone };
+      localStorage.setItem(KEY_AUTH_USER, JSON.stringify(currentUser));
+      activateUserSession();
+    }
+
+    function loginAsBarber(e) {
+      e.preventDefault();
+      const bId = document.getElementById('login-barber-id').value;
+      const pin = document.getElementById('login-barber-pin').value.trim();
+
+      const barber = BARBERS.find(b => b.id === bId);
+      if (pin !== barber.pin && pin !== '1234') {
+        alert('PIN incorreto! A senha padrão é 1234.');
+        return;
+      }
+
+      currentUser = { role: 'barber', name: barber.name, barberId: barber.id };
+      selectedBarberId = barber.id;
+      localStorage.setItem(KEY_AUTH_USER, JSON.stringify(currentUser));
+      activateUserSession();
+    }
+
+    function loginAsAdmin(e) {
+      e.preventDefault();
+      const pass = document.getElementById('login-admin-pass').value.trim();
+
+      if (pass !== 'admin123') {
+        alert('Senha incorreta! A senha do Dono é admin123.');
+        return;
+      }
+
+      currentUser = { role: 'admin', name: 'Administrador (Dono)' };
+      localStorage.setItem(KEY_AUTH_USER, JSON.stringify(currentUser));
+      activateUserSession();
+    }
+
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem(KEY_AUTH_USER);
+      document.getElementById('auth-screen').classList.remove('hidden');
+      document.getElementById('main-header').classList.add('hidden');
+      document.getElementById('role-view-client').classList.add('hidden');
+      document.getElementById('role-view-barber').classList.add('hidden');
+      document.getElementById('role-view-admin').classList.add('hidden');
+    }
+
+    function activateUserSession() {
+      if (!currentUser) return;
+
+      document.getElementById('auth-screen').classList.add('hidden');
+      document.getElementById('main-header').classList.remove('hidden');
+
+      document.getElementById('user-badge-name').innerText = currentUser.name;
+      document.getElementById('user-badge-role').innerText = currentUser.role === 'admin' ? 'Administrador' : currentUser.role === 'barber' ? 'Barbeiro' : 'Cliente';
+
+      // Prefill client name & phone in booking
+      if (currentUser.role === 'client') {
+        document.getElementById('c-input-name').value = currentUser.name;
+        document.getElementById('c-input-phone').value = currentUser.phone || '';
+      }
 
       document.getElementById('role-view-client').classList.add('hidden');
       document.getElementById('role-view-barber').classList.add('hidden');
       document.getElementById('role-view-admin').classList.add('hidden');
 
-      document.getElementById('role-btn-client').className = "px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition-all flex items-center gap-1.5";
-      document.getElementById('role-btn-barber').className = "px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition-all flex items-center gap-1.5";
-      document.getElementById('role-btn-admin').className = "px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition-all flex items-center gap-1.5";
-
-      if (role === 'client') {
+      if (currentUser.role === 'client') {
         document.getElementById('role-view-client').classList.remove('hidden');
-        document.getElementById('role-btn-client').className = "px-3 py-1.5 rounded-lg bg-gold-500 text-dark-900 shadow font-bold transition-all flex items-center gap-1.5";
-      } else if (role === 'barber') {
+        switchClientTab('booking');
+      } else if (currentUser.role === 'barber') {
         document.getElementById('role-view-barber').classList.remove('hidden');
-        document.getElementById('role-btn-barber').className = "px-3 py-1.5 rounded-lg bg-gold-500 text-dark-900 shadow font-bold transition-all flex items-center gap-1.5";
+        document.getElementById('barber-selector').value = currentUser.barberId || 'b1';
+        selectedBarberId = currentUser.barberId || 'b1';
         renderBarberView();
-      } else if (role === 'admin') {
+      } else if (currentUser.role === 'admin') {
         document.getElementById('role-view-admin').classList.remove('hidden');
-        document.getElementById('role-btn-admin').className = "px-3 py-1.5 rounded-lg bg-gold-500 text-dark-900 shadow font-bold transition-all flex items-center gap-1.5";
         renderAdminFull();
       }
     }
