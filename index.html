@@ -554,7 +554,13 @@
         </div>
       </div>
 
-      <!-- GERENCIAR BARBEIROS (NOVO BLOCO ADICIONADO) -->
+      <!-- CLIENTES VIP ASSINANTES (NOVO BLOCO ADICIONADO NO ADMIN) -->
+      <div class="bg-dark-800 p-5 rounded-xl border border-gold-500/30 space-y-4">
+        <h3 class="text-base font-bold text-white"><i class="fa-solid fa-crown text-gold-400 mr-2"></i> Clientes com Assinatura VIP Ativa</h3>
+        <div id="admin-vip-subscribers-list" class="space-y-2"></div>
+      </div>
+
+      <!-- GERENCIAR BARBEIROS -->
       <div class="bg-dark-800 p-5 rounded-xl border border-dark-700 space-y-4">
         <h3 class="text-base font-bold text-white"><i class="fa-solid fa-user-gear text-gold-400 mr-2"></i> Gerenciar Barbeiros da Equipe</h3>
         
@@ -779,6 +785,7 @@
         renderQueue();
         renderLoyalty();
         renderShop();
+        checkActiveSubscription();
       } else if (currentUser.role === 'barber') {
         document.getElementById('role-view-barber').classList.remove('hidden');
         renderBarberDashboard();
@@ -800,6 +807,7 @@
       if (tab === 'queue') renderQueue();
       if (tab === 'loyalty') renderLoyalty();
       if (tab === 'shop') renderShop();
+      if (tab === 'club') checkActiveSubscription();
     }
 
     function renderClientServices() {
@@ -1026,7 +1034,28 @@
     }
 
     function subscribeClub(planName, price) {
-      localStorage.setItem('brdias_vip_sub', JSON.stringify({ planName, price, date: new Date().toLocaleDateString() }));
+      const subs = JSON.parse(localStorage.getItem('brdias_vip_subs_list') || '[]');
+      
+      // Evitar duplicatas do mesmo cliente
+      const existingIdx = subs.findIndex(s => s.clientName === currentUser.name);
+      const newSub = {
+        id: 'sub-' + Date.now(),
+        clientName: currentUser.name,
+        clientPhone: currentUser.phone || '(84) 99999-9999',
+        planName,
+        price,
+        date: new Date().toLocaleDateString()
+      };
+
+      if (existingIdx >= 0) {
+        subs[existingIdx] = newSub;
+      } else {
+        subs.push(newSub);
+      }
+
+      localStorage.setItem('brdias_vip_subs_list', JSON.stringify(subs));
+      localStorage.setItem('brdias_vip_sub', JSON.stringify(newSub));
+
       alert(`Parabéns! Assinatura do ${planName} realizada com sucesso.`);
       checkActiveSubscription();
     }
@@ -1034,16 +1063,24 @@
     function checkActiveSubscription() {
       const sub = JSON.parse(localStorage.getItem('brdias_vip_sub'));
       const card = document.getElementById('active-subscription-card');
-      if (sub) {
-        card.classList.remove('hidden');
-        document.getElementById('sub-card-title').innerText = `Sua Assinatura: ${sub.planName} (R$ ${sub.price.toFixed(2)})`;
-      } else {
-        card.classList.add('hidden');
+      if (card) {
+        if (sub) {
+          card.classList.remove('hidden');
+          document.getElementById('sub-card-title').innerText = `Sua Assinatura: ${sub.planName} (R$ ${sub.price.toFixed(2)})`;
+        } else {
+          card.classList.add('hidden');
+        }
       }
     }
 
     function cancelSubscription() {
       if (confirm('Deseja cancelar sua assinatura VIP?')) {
+        const sub = JSON.parse(localStorage.getItem('brdias_vip_sub'));
+        if (sub) {
+          let subs = JSON.parse(localStorage.getItem('brdias_vip_subs_list') || '[]');
+          subs = subs.filter(s => s.clientName !== sub.clientName);
+          localStorage.setItem('brdias_vip_subs_list', JSON.stringify(subs));
+        }
         localStorage.removeItem('brdias_vip_sub');
         checkActiveSubscription();
         alert('Assinatura cancelada.');
@@ -1110,6 +1147,19 @@
       document.getElementById('admin-stat-commissions').innerText = `R$ ${(rev * 0.5).toFixed(2).replace('.', ',')}`;
 
       document.getElementById('admin-whatsapp-input').value = localStorage.getItem(STORAGE_WA) || '558488251134';
+
+      // Renderizar Clientes VIP Assinantes no Admin
+      const vipSubs = JSON.parse(localStorage.getItem('brdias_vip_subs_list') || '[]');
+      const vipContainer = document.getElementById('admin-vip-subscribers-list');
+      vipContainer.innerHTML = vipSubs.map(sub => `
+        <div class="bg-dark-900 p-3 rounded-lg border border-dark-700 flex items-center justify-between text-xs">
+          <div>
+            <p class="font-bold text-white text-sm"><i class="fa-solid fa-user text-gold-400 mr-1"></i> ${sub.clientName} <span class="text-gray-400 font-normal">(${sub.clientPhone})</span></p>
+            <p class="text-[11px] text-gold-400 font-semibold mt-0.5">Plano: ${sub.planName} (R$ ${sub.price.toFixed(2)}) • <span class="text-gray-400 font-normal">Assinado em: ${sub.date}</span></p>
+          </div>
+          <span class="bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded font-bold uppercase text-[10px]">Ativo</span>
+        </div>
+      `).join('') || '<p class="text-xs text-gray-400">Nenhum cliente com assinatura VIP ativa no momento.</p>';
 
       // Renderizar Barbeiros Cadastrados no Admin
       const barbersContainer = document.getElementById('admin-barbers-list');
